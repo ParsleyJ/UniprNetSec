@@ -24,7 +24,7 @@ import java.util.Scanner;
  * @author Giuseppe Petrosino - giuseppe.petrosino@studenti.unipr.it
  */
 @SuppressWarnings("WeakerAccess")
-public class PNRGStreamCipher {
+public class PRNGStreamCipher {
 
     private byte[] key;
 
@@ -34,7 +34,7 @@ public class PNRGStreamCipher {
      *
      * @param key the key
      */
-    public PNRGStreamCipher(byte[] key) {
+    public PRNGStreamCipher(byte[] key) {
         this.key = key;
     }
 
@@ -93,7 +93,7 @@ public class PNRGStreamCipher {
         System.out.println("Key = ?");
         String key = sc.nextLine();
 
-        PNRGStreamCipher pnrgStreamCipher = new PNRGStreamCipher(key.getBytes());
+        PRNGStreamCipher prngSC = new PRNGStreamCipher(key.getBytes());
 
         System.out.println("Text = ?");
         String text = sc.nextLine();
@@ -103,11 +103,11 @@ public class PNRGStreamCipher {
         System.out.println("Text in hex:");
         System.out.println(HexStrings.toHexString(text.getBytes()));
 
-        byte[] encrypted = pnrgStreamCipher.encrypt(text.getBytes());
+        byte[] encrypted = prngSC.encrypt(text.getBytes());
         System.out.println("Encrypted (hex):");
         System.out.println(HexStrings.toHexString(encrypted));
 
-        byte[] decrypted = pnrgStreamCipher.decrypt(encrypted);
+        byte[] decrypted = prngSC.decrypt(encrypted);
         System.out.println("Decrypted (hex):");
         System.out.println(HexStrings.toHexString(decrypted));
 
