@@ -5,7 +5,7 @@ import parsleyj.NetSecLab.util.HexStrings;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Class to perform a brute force attack against a {@link PRNGStreamCipher}-ed ciphertext. The plain text is known to
+ * Class to perform a brute force attack against a ciphertext. The plain text is known to
  * contain only lowercase letters and simple whitespace characters.
  *
  * <br>
@@ -26,16 +26,20 @@ import java.security.NoSuchAlgorithmException;
  *
  * @author Giuseppe Petrosino - giuseppe.petrosino@studenti.unipr.it
  */
-public class PRNGBruteForce {
+public class BruteForce {
 
     private int key_len;
+    private final SymmetricCipher cipher;
 
     /**
      * Initializes the brute force session with the necessary hints
-     * @param key_len    the length of the secret key, in bytes
+     *
+     * @param key_len the length of the secret key, in bytes
+     * @param cipher  the cipher that will be used to try to decrypt the text
      */
-    public PRNGBruteForce(int key_len) {
+    public BruteForce(int key_len, SymmetricCipher cipher) {
         this.key_len = key_len;
+        this.cipher = cipher;
     }
 
     /**
@@ -47,7 +51,7 @@ public class PRNGBruteForce {
      */
     public byte[] bruteForce(byte[] ciphertext) throws NoSuchAlgorithmException {
         for (byte[] key : new KeySpace(key_len)) {
-            byte[] plaintext = new PRNGStreamCipher(key).decrypt(ciphertext);
+            byte[] plaintext = cipher.decrypt(ciphertext, key);
             boolean match = true;
 
             for (byte c : plaintext) {
@@ -74,17 +78,17 @@ public class PRNGBruteForce {
     public static void main(String[] argv) throws NoSuchAlgorithmException {
 
         byte[] seed = "sss".getBytes();
-        byte[] ciphertext = new PRNGStreamCipher(seed).encrypt("hello world".getBytes());
+        byte[] ciphertext = new PRNGStreamCipher().encrypt("hello world".getBytes(), seed);
         System.out.println("ciphertext: " + HexStrings.toHexString(ciphertext));
 
         long start = System.currentTimeMillis();
         // brute force attack
-        final byte[] foundKey = new PRNGBruteForce(seed.length).bruteForce(ciphertext);
-        if(foundKey.length == 0){
+        final byte[] foundKey = new BruteForce(seed.length, new PRNGStreamCipher()).bruteForce(ciphertext);
+        if (foundKey.length == 0) {
             System.out.println("Not found");
-        }else {
-            byte[] plaintext = new PRNGStreamCipher(foundKey).decrypt(ciphertext);
-            System.out.println("plaintext: \"" + new String(plaintext) + "\" (key:"+" hex=" + HexStrings.toHexString(foundKey) + ", str=" + new String(foundKey) + ")");
+        } else {
+            byte[] plaintext = new PRNGStreamCipher().decrypt(ciphertext, foundKey);
+            System.out.println("plaintext: \"" + new String(plaintext) + "\" (key:" + " hex=" + HexStrings.toHexString(foundKey) + ", str=" + new String(foundKey) + ")");
         }
 
         System.out.println("time: " + (System.currentTimeMillis() - start) + "ms");
