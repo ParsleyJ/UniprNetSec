@@ -24,7 +24,7 @@ import java.util.Scanner;
  * @author Giuseppe Petrosino - giuseppe.petrosino@studenti.unipr.it
  */
 @SuppressWarnings("WeakerAccess")
-public class PRNGStreamCipher {
+public class PRNGStreamCipher{
 
     private byte[] key;
 
