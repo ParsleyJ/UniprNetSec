@@ -46,20 +46,8 @@ public class PRNGBruteForce {
      * @return the found key, or a 0-sized array in the case the key could not be found
      */
     public byte[] bruteForce(byte[] ciphertext) throws NoSuchAlgorithmException {
-        boolean found = false;
-        long key_space_size = (long) Math.pow(2, key_len * 8);
-
-
-        byte[] key = new byte[key_len];
-
-        for (long s = 0; s < key_space_size; s++) {
-            //distributes the last 8*key_len bits of s inside the key byte array
-            for (int i = 0; i < key_len; i++) {
-                key[i] = (byte) ((s >> (i * 8)) & 0xff);
-            }
-
+        for (byte[] key : new KeySpace(key_len)) {
             byte[] plaintext = new PRNGStreamCipher(key).decrypt(ciphertext);
-
             boolean match = true;
 
             for (byte c : plaintext) {
@@ -72,8 +60,8 @@ public class PRNGBruteForce {
                 return key;
             }
         }
-
         return new byte[0];
+
     }
 
 
